@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>U Wanna Be My Gf?</title>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #000;
+        font-family: "Arial", sans-serif;
+        color: #fff;
+      }
+
+      .container {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+        background: radial-gradient(circle, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 1) 100%);
+      }
+
+      .element {
+        position: absolute;
+        white-space: nowrap;
+        animation: float 20s infinite linear;
+        text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff69b4;
+        opacity: 0.8;
+        transition: transform 0.5s ease-out;
+      }
+
+      .element.text {
+        font-size: 2vw;
+        color: #ff69b4; /* Pink */
+      }
+
+      .element.heart {
+        font-size: 3vw;
+        color: #ff0000; /* Red */
+      }
+
+      .element.image {
+        width: 8vw;
+        height: auto;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      }
+
+      .button-group {
+        position: fixed;
+        left: 50%;
+        bottom: 40px;
+        transform: translateX(-50%);
+        z-index: 10;
+        display: flex;
+        gap: 20px;
+      }
+
+      .btn {
+        padding: 12px 32px;
+        font-size: 1.2rem;
+        border: none;
+        border-radius: 8px;
+        background: #ff69b4;
+        color: #fff;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(255, 105, 180, 0.3);
+        transition: background 0.2s;
+      }
+
+      .btn:hover {
+        background: #ff1493;
+      }
+
+      #hasil {
+        text-align: center;
+        font-size: 2rem;
+        margin-top: 20px;
+        z-index: 20;
+        position: fixed;
+        left: 50%;
+        bottom: 100px;
+        transform: translateX(-50%);
+        width: 100vw;
+        pointer-events: none;
+      }
+
+      #play-audio {
+        position: fixed;
+        left: 50%;
+        bottom: 90px;
+        transform: translateX(-50%);
+        z-index: 20;
+        padding: 8px 24px;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: none;
+        background: #fff;
+        color: #ff69b4;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(255, 105, 180, 0.3);
+      }
+
+      @keyframes float {
+        0% {
+          transform: translate(0, 0) scale(1);
+        }
+        50% {
+          transform: translate(10vw, 10vh) scale(1.2);
+        }
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container"></div>
+
+    <div class="button-group">
+      <button class="btn" id="btn-ya">Ya</button>
+      <button class="btn" id="btn-tidak">Tidak</button>
+    </div>
+    <button id="play-audio" class="btn">Play Musik</button>
+    <div id="hasil"></div>
+    <!-- Ganti src dengan file audio mp3 yang valid -->
+    <audio id="bg-music" src="23.mp3" loop></audio>
+
+    <script>
+      const container = document.querySelector(".container");
+      const phrases = ["u wanna be my gf?", "mak lampir"];
+      const images = ["1.jpg", "2.jpg", "3.jpg", "4.jpg"]; // Ganti dengan nama file gambar Anda
+      const hearts = ["❤️", "💖", "💕"];
+      const numElements = 50;
+      const GOOGLE_SHEETS_API = "https://script.google.com/macros/s/AKfycbx8uNlG69QhOtZPA_plWxUKfWDUPAiTyHmuybDhegws_sreiZIVRjYgcmtVst9kezT5/exec";
+
+      function getRandom(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      function createElements() {
+        for (let i = 0; i < numElements; i++) {
+          const element = document.createElement("div");
+          element.classList.add("element");
+
+          // Tentukan jenis elemen (teks, gambar, atau hati) secara acak
+          const type = getRandom(0, 100);
+          if (type < 60) {
+            element.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+            element.classList.add("text");
+          } else if (type < 80) {
+            element.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+            element.classList.add("heart");
+          } else {
+            const img = document.createElement("img");
+            img.src = images[Math.floor(Math.random() * images.length)];
+            img.style.width = "8vw";
+            img.style.height = "8vw";
+            img.style.objectFit = "cover";
+            img.style.borderRadius = "5px";
+            img.style.boxShadow = "0 0 10px rgba(255,255,255,0.5)";
+            element.appendChild(img);
+            element.classList.add("image");
+          }
+
+          // Posisi dan ukuran acak
+          element.style.left = `${getRandom(-20, 100)}vw`;
+          element.style.top = `${getRandom(-20, 100)}vh`;
+          element.style.transform = `scale(${getRandom(0.5, 2)}) rotate(${getRandom(-45, 45)}deg)`;
+
+          // Animasi acak
+          element.style.animationDuration = `${getRandom(15, 30)}s`;
+          element.style.animationDelay = `-${getRandom(0, 30)}s`;
+
+          container.appendChild(element);
+        }
+      }
+
+      // Jalankan fungsi
+      createElements();
+
+      function konfirmasiDanKirim(jawaban) {
+        if (confirm("Apakah kamu yakin memilih '" + jawaban + "'?")) {
+          document.getElementById("hasil").textContent = "Kamu memilih: " + jawaban + "!";
+          fetch(GOOGLE_SHEETS_API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ jawaban }),
+            mode: "no-cors",
+          });
+          document.querySelector(".button-group").style.display = "none";
+        }
+      }
+
+      // Event tombol
+      document.getElementById("btn-ya").onclick = function () {
+        konfirmasiDanKirim("Ya");
+      };
+      document.getElementById("btn-tidak").onclick = function () {
+        konfirmasiDanKirim("Tidak");
+      };
+
+      // Play audio jika tombol diklik
+      document.getElementById("play-audio").onclick = function () {
+        const audio = document.getElementById("bg-music");
+        audio.volume = 0.5;
+        audio.play();
+      };
+
+      // Play audio otomatis saat halaman dibuka
+      window.addEventListener("DOMContentLoaded", function () {
+        const audio = document.getElementById("bg-music");
+        audio.volume = 0.5;
+        audio.play();
+      });
+
+      const hasil = document.getElementById("hasil").textContent;
+      console.log(hasil); // Menampilkan jawaban di console
+    </script>
+  </body>
+</html>
